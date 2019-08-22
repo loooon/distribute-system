@@ -1,0 +1,89 @@
+server:
+  port: 8900 #服务注册中心端口号
+spring:
+  application:
+    name: gateway-service
+  jmx:
+    enabled: false
+  cloud:
+    gateway:
+#      default-filters:
+#        - PrefixPath=/httpbin
+#        - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+
+      routes:
+        # =====================================
+        # to run server
+        # $ wscat --listen 9000
+        # to run client
+        # $ wscat --connect ws://localhost:8080/echo
+        - id: websocket_test
+          uri: ws://localhost:9000
+          order: 9000
+          predicates:
+            - Path=/echo
+        # =====================================
+        - id: default_path_to_httpbin
+#          uri: ${test.uri}
+          uri: http://localhost:9200
+          order: 10000
+          predicates:
+            - Path=/**
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka  #注册 中心已经开启认证
+
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}:${spring.application.name}
+    prefer-ip-address: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        cloud:
+#          gateway=TRACE:
+#    com:
+#      netflix:
+#        eureka: OFF
+#        discovery: OFF
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+#zuul:
+#  ignored-services: "*"
+#  routes:
+#    product-service:
+#      path: /product-service/**
+#      serviceId: product-service
+#      stripPrefix: true
+#      ignored-patterns:
+#        - /test/*
+#      sensitiveHeaders:  # 置空该属性的值即可
+#    order-service:
+#      path: /order-service/**
+#      serviceId: order-service
+#      stripPrefix: true
+#      ignored-patterns:
+#        - /test/*
+#      sensitiveHeaders:  # 置空该属性的值即可
+#    gross-settlement-service:
+#      path: /gross-settlement-service/**
+#      serviceId: gross-settlement-service
+#      stripPrefix: true
+#      ignored-patterns:
+#        - /test/*
+#      sensitiveHeaders:  # 置空该属性的值即可

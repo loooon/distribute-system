@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: config-service
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    #    port: 4369
+    #    port: 61613
+    virtual-host: /
+    username: guest
+    password: guest
+    publisher-confirms: true
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/loooon/cloud_config.git
+          skipSslValidation: true
+          force-pull: true
+      label: master # 远程仓库的分支
+      profile: dev # dev 开发环境配置文件 |  test 测试环境  |  pro 正式环境
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+server:
+  port: 8888
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}:${spring.application.name}
+  client:
+    healthcheck:
+      enabled: true
+

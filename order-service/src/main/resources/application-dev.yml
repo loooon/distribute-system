@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: order-service
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    #    port: 4369
+    #    port: 61613
+    virtual-host: /
+    username: guest
+    password: guest
+    publisher-confirms: true
+  jpa:
+    hibernate:
+      ddl-auto: update #     can be none, update, create, create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL55Dialect #使用innodb引擎
+  datasource:
+    url: jdbc:mysql://localhost:3306/order_system_db?characterEncoding=utf-8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+
+  cloud:
+    config:
+      uri: http://localhost:8888/
+      label: master # 远程仓库的分支
+      profile: dev # dev 开发环境配置文件 |  test 测试环境  |  pro 正式环境
+
+server:
+  port: 9200
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}:${spring.application.name}
+  client:
+    healthcheck:
+      enabled: true
+#  client:
+#    serviceUrl: #注册中心的注册地址
+#      defaultZone: http://127.0.0.1:8761/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

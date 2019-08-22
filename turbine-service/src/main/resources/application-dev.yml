@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: turbine-service
+
+server:
+  port: 12086
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}:${spring.application.name}
+  client:
+    healthcheck:
+      enabled: true
+
+turbine:
+  # 配置Eureka中的serviceId列表，表明监控哪些服务,多个服务用',"分隔
+  #  appConfig: CLOUD-CONSUMER-HYSTRIX
+  appConfig: order-service,product-service,gross-settlement-service
+  aggregator:
+    # 指定聚合哪些集群，多个使用”,”分割，默认为default。可使用http://.../turbine.stream?cluster={clusterConfig之一}访问
+    clusterConfig: default
+  clusterNameExpression: new String("default")
